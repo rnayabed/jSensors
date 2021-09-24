@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import com.profesorfalken.jsensors.model.components.Components;
 import com.profesorfalken.jsensors.standalone.ConsoleOutput;
-import com.profesorfalken.jsensors.standalone.GuiOutput;
 
 /**
  * Main class of JSensors. <br>
@@ -36,7 +35,8 @@ import com.profesorfalken.jsensors.standalone.GuiOutput;
  * 
  * @author Javier Garcia Alonso
  */
-public enum JSensors {
+public enum JSensors
+{
 
 	get;
 
@@ -46,14 +46,21 @@ public enum JSensors {
 
 	private Map<String, String> usedConfig = null;
 
-	static {
+	static
+	{
 		checkRights();
 	}
 
-	private static void checkRights() {
+	private static void checkRights()
+	{
 		if (OSDetector.isWindows() && !PowerShellOperations.isAdministrator()) {
 			LOGGER.warn("You have not executed jSensors in Administrator mode, so CPU temperature sensors will not be detected.");
 		}
+	}
+
+	public static boolean willTempWork()
+	{
+		return (OSDetector.isWindows() && PowerShellOperations.isAdministrator()) || OSDetector.isUnix();
 	}
 
 	JSensors() {
@@ -116,22 +123,11 @@ public enum JSensors {
 	 * 
 	 * @param args program arguments
 	 */
-	public static void main(String[] args) {
-		boolean guiMode = false;
+	public static void main(String[] args)
+	{
 		Map<String, String> overriddenConfig = new HashMap<String, String>();
-		for (final String arg : args) {
-			if ("--debug".equals(arg)) {
-				overriddenConfig.put("debugMode", "true");
-			}
-			if ("--gui".equals(arg)) {
-				guiMode = true;
-			}
-		}
+		overriddenConfig.put("debugMode", "true");
 
-		if (guiMode) {
-			GuiOutput.showOutput(overriddenConfig);
-		} else {
-			ConsoleOutput.showOutput(overriddenConfig);
-		}
+		ConsoleOutput.showOutput(overriddenConfig);
 	}
 }
